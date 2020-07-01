@@ -38,8 +38,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         Timer.scheduledTimer(withTimeInterval: 5, repeats: true, block: { (timer) in if let coord = self.ubicacion.location?.coordinate{
             let pokemon = self.pokemons[Int(arc4random_uniform(UInt32(self.pokemons.count)))]
             let pin = PokePin(coord: coord, pokemon: pokemon)
-            let randomLat = (Double(arc4random_uniform(200))-100.0)/5000.0
-            let randomLon = (Double(arc4random_uniform(200))-100.0)/5000.0
+            let randomLat = (Double(arc4random_uniform(200))-100.0)/50000.0
+            let randomLon = (Double(arc4random_uniform(200))-100.0)/50000.0
             pin.coordinate.longitude += randomLon
             pin.coordinate.latitude += randomLat
             self.mapView.addAnnotation(pin)
@@ -98,6 +98,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block:{ (timer) in if let coord = self.ubicacion.location?.coordinate {
             let pokemon = (view.annotation as! PokePin).pokemon
                 if MKMapRectContainsPoint(mapView.visibleMapRect, MKMapPointForCoordinate(coord)){
+                    if(pokemon.atrapado){
+                        let alert = UIAlertController(title: "Ya tienes a este pokemon", message: "¿Aún así deseas capturarlo?", preferredStyle: .alert)
+                        let siCapturar = UIAlertAction(title: "Sí", style: .default, handler: nil)
+                        alert.addAction(siCapturar)
+                        let noCapturar = UIAlertAction(title: "No", style: .default, handler: nil)
+                        alert.addAction(noCapturar)
+                        self.present(alert, animated: true, completion: nil)
+                    }
                     print("Puede atrapar al pokemon")
                     pokemon.atrapado = true
                     (UIApplication.shared.delegate as! AppDelegate).saveContext()
